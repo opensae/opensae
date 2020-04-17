@@ -1,10 +1,11 @@
-package _func
+package fc
 
 import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-resty/resty/v2"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 func DoFunc(c *Context) (*resty.Response, error) {
@@ -21,8 +22,9 @@ func DoFunc(c *Context) (*resty.Response, error) {
 type Func struct {
 }
 
-func New() *Func {
-	return &Func{}
+func RouteRegister(router *gin.RouterGroup, dbc *mongo.Client) {
+	f := &Func{}
+	router.Any("/:service/:name", f.HTTPTrigger)
 }
 
 func (s *Func) HTTPTrigger(c *gin.Context) {

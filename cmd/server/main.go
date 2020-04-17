@@ -5,17 +5,13 @@ import (
 	"os"
 	"time"
 
-	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/urfave/cli"
 
-	"github.com/saltbo/opensae/core"
-	"github.com/saltbo/opensae/rest"
+	"github.com/saltbo/opensae/engine"
 )
 
 const (
-	FLAG_DRIVER     = "driver"
-	FLAG_DSN        = "dsn"
-	FLAG_PLUGIN_DIR = "plugin-dir"
+	FLAG_DSN = "dsn"
 )
 
 func main() {
@@ -27,19 +23,9 @@ func main() {
 	app.Copyright = "(c) 2020 saltbo.cn"
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
-			Name:  FLAG_DRIVER,
-			Usage: "specify database driver, default: sqlite3",
-			Value: "sqlite3",
-		},
-		cli.StringFlag{
 			Name:  FLAG_DSN,
-			Usage: "specify data source name, default: test.db",
-			Value: "build/test.db",
-		},
-		cli.StringFlag{
-			Name:  FLAG_PLUGIN_DIR,
-			Usage: "specify plugin dir, default: build/plugins",
-			Value: "build/plugins",
+			Usage: "specify data source name",
+			Value: "mongodb://root:admin@localhost:27017",
 		},
 	}
 	app.Action = serverAction
@@ -49,14 +35,12 @@ func main() {
 }
 
 func serverAction(c *cli.Context) {
-	engine, err := core.New(c.String(FLAG_DRIVER), c.String(FLAG_DSN))
+	ee, err := engine.New(c.String(FLAG_DSN))
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	if err := engine.Boot(); err != nil {
+	if err := ee.Boot(); err != nil {
 		log.Fatalln(err)
 	}
-
-	rest.Boot(engine) // boot the rest server.
 }

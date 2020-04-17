@@ -1,4 +1,4 @@
-package _func
+package fc
 
 import (
 	"net/http"
