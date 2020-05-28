@@ -1,4 +1,4 @@
-package storage
+package db
 
 import (
 	"net/http"
@@ -21,6 +21,9 @@ func RouteRegister(r *gin.RouterGroup, dbc *mongo.Client) {
 func (s *Storage) Operation(c *gin.Context) {
 	app := c.GetString("app")
 	doc := c.Param("doc")
+
+	// 检查是否有权限操作doc
+
 	collection := s.dbc.Database("app:" + app).Collection(doc)
 	switch c.Request.Method {
 	case http.MethodGet:

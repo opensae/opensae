@@ -10,9 +10,9 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 
 	"github.com/saltbo/opensae/engine/api"
-	"github.com/saltbo/opensae/engine/fc"
+	"github.com/saltbo/opensae/engine/db"
+	"github.com/saltbo/opensae/engine/sae"
 	"github.com/saltbo/opensae/engine/sfh"
-	"github.com/saltbo/opensae/engine/storage"
 )
 
 type Engine struct {
@@ -37,13 +37,13 @@ func New(dsn string) (*Engine, error) {
 }
 
 func (e *Engine) Boot() error {
-	// 存储
-	storageRouter := e.Router.Group("/storage")
-	storage.RouteRegister(storageRouter, e.Database)
+	// 云引擎
+	saeRouter := e.Router.Group("/sae")
+	sae.RouteRegister(saeRouter, e.Database)
 
-	// 函数计算
-	fcRouter := e.Router.Group("/fc")
-	fc.RouteRegister(fcRouter, e.Database)
+	// 数据库
+	storageRouter := e.Router.Group("/db")
+	db.RouteRegister(storageRouter, e.Database)
 
 	// 系统API
 	apiRouter := e.Router.Group("/api")
